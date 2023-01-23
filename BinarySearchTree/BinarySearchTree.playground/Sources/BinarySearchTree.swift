@@ -29,7 +29,7 @@ public enum BinarySearchTree<T: Comparable> {
             } else {
                 return .node(.empty, value, .leaf(newValue))
             }
-        case .node(let left, let value, let right):
+        case let .node(left, value, right):
             if (newValue < value) {
                 return .node(left.treeWithInsertedValue(newValue: newValue), value, right)
             } else {
@@ -50,7 +50,7 @@ public enum BinarySearchTree<T: Comparable> {
             return nil
         case let .leaf(value):
             return (forValue == value) ? self : nil
-        case .node(let left, let value, let right):
+        case let .node(left, value, right):
             if (forValue == value) {
                 return self
             } else if (forValue < value) {
@@ -69,7 +69,7 @@ public enum BinarySearchTree<T: Comparable> {
             return
         case let .leaf(value):
             processValue(value)
-        case .node(let left, let value, let right):
+        case let .node(left, value, right):
             left.traverseInOrder(processValue: processValue)
             processValue(value)
             right.traverseInOrder(processValue: processValue)
@@ -84,7 +84,7 @@ public enum BinarySearchTree<T: Comparable> {
             return
         case let .leaf(value):
             processValue(value)
-        case .node(let left, let value, let right):
+        case let .node(left, value, right):
             processValue(value)
             left.traversePreOrder(processValue: processValue)
             right.traversePreOrder(processValue: processValue)
@@ -99,7 +99,7 @@ public enum BinarySearchTree<T: Comparable> {
             return
         case let .leaf(value):
             processValue(value)
-        case .node(let left, let value, let right):
+        case let .node(left, value, right):
             left.traversePostOrder(processValue: processValue)
             right.traversePostOrder(processValue: processValue)
             processValue(value)
@@ -110,7 +110,7 @@ public enum BinarySearchTree<T: Comparable> {
 extension BinarySearchTree: CustomStringConvertible {
     public var description: String {
     switch self {
-    case .node(let left, let value, let right):
+    case let .node(left, value, right):
 //        return "value: \(value), left = [" + left.description + "], right = [" + right.description + "]"
         return "(\(left.description)) <- \(value) -> (\(right.description))"
     case let .leaf(value):
