@@ -2,6 +2,7 @@ import Foundation
 
 public enum BinarySearchTree<T: Comparable> {
     case empty
+    case leaf(T)
     /// indirect used for recursive enum case
     /// - Provides layer of indirection for case referencing
     /// - Allows for enum size to grow without infinite memory risk
@@ -11,6 +12,8 @@ public enum BinarySearchTree<T: Comparable> {
         switch self {
         case let .node(left, _, right):
             return left.count + 1 + right.count
+        case .leaf(_):
+            return 1
         case .empty:
             return 0
         }
@@ -20,6 +23,12 @@ public enum BinarySearchTree<T: Comparable> {
         switch self {
         case .empty:
             return .node(.empty, newValue, .empty)
+        case let .leaf(value):
+            if newValue < value {
+                return .node(.leaf(newValue), value, .empty)
+            } else {
+                return .node(.empty, value, .leaf(newValue))
+            }
         case .node(let left, let value, let right):
             if (newValue < value) {
                 return .node(left.treeWithInsertedValue(newValue: newValue), value, right)
@@ -39,6 +48,8 @@ public enum BinarySearchTree<T: Comparable> {
         switch self {
         case .empty:
             return nil
+        case let .leaf(value):
+            return (forValue == value) ? self : nil
         case .node(let left, let value, let right):
             if (forValue == value) {
                 return self
@@ -56,32 +67,38 @@ public enum BinarySearchTree<T: Comparable> {
         switch self {
         case .empty:
             return
+        case let .leaf(value):
+            processValue(value)
         case .node(let left, let value, let right):
             left.traverseInOrder(processValue: processValue)
             processValue(value)
             right.traverseInOrder(processValue: processValue)
         }
     }
-    
+
     /// Traverses Binary Tree pre order
     /// Time Complexity: O(n) such that n = number of nodes in tree
     public func traversePreOrder(processValue: (T) -> ()) {
         switch self {
         case .empty:
             return
+        case let .leaf(value):
+            processValue(value)
         case .node(let left, let value, let right):
             processValue(value)
             left.traversePreOrder(processValue: processValue)
             right.traversePreOrder(processValue: processValue)
         }
     }
-    
+
     /// Traverses Binary Tree post order
     /// Time Complexity: O(n) such that n = number of nodes in tree
     public func traversePostOrder(processValue: (T) -> ()) {
         switch self {
         case .empty:
             return
+        case let .leaf(value):
+            processValue(value)
         case .node(let left, let value, let right):
             left.traversePostOrder(processValue: processValue)
             right.traversePostOrder(processValue: processValue)
@@ -94,9 +111,12 @@ extension BinarySearchTree: CustomStringConvertible {
     public var description: String {
     switch self {
     case .node(let left, let value, let right):
-        return "value: \(value), left = [" + left.description + "], right = [" + right.description + "]"
+//        return "value: \(value), left = [" + left.description + "], right = [" + right.description + "]"
+        return "(\(left.description)) <- \(value) -> (\(right.description))"
+    case let .leaf(value):
+        return "\(value)"
     case .empty:
-        return ""
+        return "."
     }
   }
 }
